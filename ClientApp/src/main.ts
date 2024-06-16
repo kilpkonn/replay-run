@@ -130,22 +130,19 @@ export class Main extends Base {
       this.gaEvent("auto_center");
     });
 
-    this.getById("gpxFile")?.addEventListener("change", () => {
-      this.closeModal();
-      let reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        () => {
+    this.getById("gpxFile")?.addEventListener("change", (e) => {
+      const files = e.currentTarget.files;
+      Object.keys(files).forEach(i => {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          //server call for uploading or reading the files one-by-one
+          //by using 'reader.result' or 'file'
           this.createActivityFromTextResult(<any>reader.result);
-        },
-        false
-      );
-      const files = (this.getById("gpxFile") as HTMLInputElement).files;
-      if (files) {
-        for (let i = 0; i < files.length; i++) {
-          reader.readAsText(files[i]);
         }
-      }
+        reader.readAsBinaryString(file);
+      }) 
+      this.closeModal();
     });
 
     this.addClickHandler("activities", (e: MouseEvent) => {
