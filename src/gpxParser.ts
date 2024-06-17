@@ -39,7 +39,7 @@ export class GPXParser {
             previousTime = time;
             previousLonLat = [lon, lat];
         }
-        return { title: title, points: longLatArray, visible: true, startDateTime: startDateTime! };
+        return { title: title, points: longLatArray, visible: true, startDateTime: startDateTime!, offset: 0 };
     }
 
     getFloatVal(element: Element, key: string) {

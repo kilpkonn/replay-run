@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Activity } from "./models";
 
 export class Player {

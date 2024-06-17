@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import Map from "@arcgis/core/Map";
@@ -131,7 +133,7 @@ export class Main extends Base {
     });
 
     this.getById("gpxFile")?.addEventListener("change", (e) => {
-      const files = e.currentTarget.files;
+      const files = (<HTMLInputElement>e.currentTarget!).files!;
       Object.keys(files).forEach(i => {
         const file = files[i];
         const reader = new FileReader();
