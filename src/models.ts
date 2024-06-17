@@ -9,4 +9,5 @@ export interface Activity {
     timeDisplay?: string;
     startDateTime?: Date;
     visible?: boolean;
+    offset: number;
 }

@@ -43,10 +43,10 @@ export class Player {
   }
 
     reset() {
-        this.toggleStartPause(true);
         this.seconds = 0;
-        this.currentDateTime = undefined;
-        this.startDateTime = undefined;
+        this.startDateTime = new Date(Math.min(...this.activities.map(it => it.startDateTime)));
+        this.currentDateTime = this.startDateTime;
+        this.toggleStartPause(true);
         this.refreshCalculations();
     }
 
@@ -55,6 +55,7 @@ export class Player {
             activity.accumulatedDistance = 0;
             activity.lastTimeUsedForDistance = 0;
             activity.averagePace = '';
+            activity.offset = activity.startDateTime.getSeconds() - this.startDateTime!.getSeconds()
         }
         const lengths = this.activities.filter(x => x.visible).map(x => x.points.length);
         this.maxSecondsOfAnyActivity = Math.max.apply(Math, lengths) - 1;
@@ -153,8 +154,9 @@ export class Player {
         for (let i = 0; i < this.activities.length; i++) {
             const activity = this.activities[i];
             if (activity.visible && activity.points.length > this.seconds) {
-                xSum += this.activities[i].points[this.seconds][0];
-                ySum += this.activities[i].points[this.seconds][1];
+                const time = Math.max(this.seconds - this.activities[i].offset, 0);
+                xSum += this.activities[i].points[time][0];
+                ySum += this.activities[i].points[time][1];
                 count++;
             }
         }

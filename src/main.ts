@@ -183,10 +183,6 @@ export class Main extends Base {
     activity.id = maxId + 1;    
     this.player.activities.push(activity);
     this.player.reset();
-    if (!this.player.startDateTime && activity.startDateTime) {
-      this.player.startDateTime = activity.startDateTime;
-      this.player.currentDateTime = activity.startDateTime;
-    }
     this.refreshActivities();
     this.refresh();
     if (this.player.activities.length === 1) {
@@ -344,10 +340,10 @@ export class Main extends Base {
     this.pointLayer!.removeAll();
     for (let i = 0; i < this.player.activities.length; i++) {
       let activity = this.player.activities[i];
-      if (activity.visible && activity.points?.length > this.player.seconds) {
-        const pgraphic = MapUtils.getPointGraphic(activity.points[this.player.seconds], this.colors![i]);
+      if (activity.visible && activity.points?.length > this.player.seconds && this.player.seconds - activity.offset >= 0) {
+        const pgraphic = MapUtils.getPointGraphic(activity.points[this.player.seconds - activity.offset], this.colors![i]);
         this.pointLayer!.add(pgraphic);
-        const lgraphic = MapUtils.getLineGraphic(activity.points, this.player.seconds, this.colors![i]);
+        const lgraphic = MapUtils.getLineGraphic(activity.points, this.player.seconds - activity.offset, this.colors![i]);
         this.pointLayer!.add(lgraphic);
       }
     }
