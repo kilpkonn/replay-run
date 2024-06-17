@@ -57,7 +57,7 @@ export class Player {
             activity.accumulatedDistance = 0;
             activity.lastTimeUsedForDistance = 0;
             activity.averagePace = '';
-            activity.offset = activity.startDateTime.getSeconds() - this.startDateTime!.getSeconds()
+            activity.offset = Math.round((activity.startDateTime.getTime() - this.startDateTime!.getTime()) / 1000)
         }
         const lengths = this.activities.filter(x => x.visible).map(x => x.points.length);
         this.maxSecondsOfAnyActivity = Math.max.apply(Math, lengths) - 1;
