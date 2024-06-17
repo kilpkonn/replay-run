@@ -140,7 +140,7 @@ export class Main extends Base {
         reader.onload = (e) => {
           //server call for uploading or reading the files one-by-one
           //by using 'reader.result' or 'file'
-          this.createActivityFromTextResult(<any>reader.result);
+          this.createActivityFromTextResult(<any>reader.result, file.name.replace('.gpx', ''));
         }
         reader.readAsBinaryString(file);
       }) 
@@ -178,8 +178,8 @@ export class Main extends Base {
     }
   }
 
-  createActivityFromTextResult(textResult: string) {
-    const activity = this.gpxParser.getActivitiesFromResult(textResult);
+  createActivityFromTextResult(textResult: string, fileName: string) {
+    const activity = this.gpxParser.getActivitiesFromResult(textResult, fileName);
     const existingIds = this.player.activities?.map((x) => x.id || 0);
     const maxId = existingIds.length ? Math.max(...existingIds) : 0;
     activity.id = maxId + 1;    

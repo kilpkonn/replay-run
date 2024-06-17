@@ -4,7 +4,7 @@ export class GPXParser {
 
     domParser = new DOMParser();
 
-    getActivitiesFromResult(fileText: string): Activity {
+    getActivitiesFromResult(fileText: string, fileName: string): Activity {
         const xmlDoc = this.domParser.parseFromString(fileText, 'text/xml');
         const trkPoints = xmlDoc.getElementsByTagName('trkpt');
         const longLatArray: Array<Array<number>> = [];
@@ -39,7 +39,7 @@ export class GPXParser {
             previousTime = time;
             previousLonLat = [lon, lat];
         }
-        return { title: title, points: longLatArray, visible: true, startDateTime: startDateTime!, offset: 0 };
+        return { title: fileName, points: longLatArray, visible: true, startDateTime: startDateTime!, offset: 0 };
     }
 
     getFloatVal(element: Element, key: string) {
