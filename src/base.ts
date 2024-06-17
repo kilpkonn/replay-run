@@ -32,6 +32,14 @@ export class Base {
     });
   }
 
+  addInputHandler(id: string, func: (e: any) => any) {
+    this.getById(id)?.addEventListener('input', async (e: any) => {
+      this.refresh();
+      await func(e);
+      this.refresh();
+    });
+  }
+
   getParameterByName(name: string) {
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));

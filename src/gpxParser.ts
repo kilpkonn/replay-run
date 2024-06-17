@@ -13,7 +13,7 @@ export class GPXParser {
         if (intervalTimeElements.length > 0) {
             intervalTime = parseInt(intervalTimeElements[0].innerHTML);
         }
-        let title = xmlDoc.getElementsByTagName('name')[0].innerHTML;
+        // let title = xmlDoc.getElementsByTagName('name')[0].innerHTML;
         let previousTime: Date | null = null;
         let previousLonLat: Array<number> | null = null;
         let startDateTime: Date;

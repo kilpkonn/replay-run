@@ -102,6 +102,10 @@ export class Main extends Base {
       this.gaEvent("faster");
     });
 
+    this.addInputHandler("player-range", (e) => {
+      this.player.setCurrentSeconds(e.target.value);
+    });
+
     this.addClickHandler("back", () => {
       this.player.goBackward();
       this.gaEvent("back");
@@ -329,7 +333,7 @@ export class Main extends Base {
     if (this.player.activities.length) {
       this.showOrHide("lat-long-label", true, 'inline');
       const firstActivity = this.player.activities[0];
-      const point = firstActivity.points[this.player.seconds];
+      const point = firstActivity.points[Math.min(this.player.seconds, firstActivity.points.length - 1)];
       this.getById("lat-long-text").innerHTML =
         point[0].toFixed(5).toString() + ", " + point[1].toFixed(5).toString();
     } else {

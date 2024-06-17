@@ -141,6 +141,13 @@ export class Player {
         this.refreshCalculations();
     }
 
+    setCurrentSeconds(percentage: number) {
+      this.toggleStartPause(true);
+      const maxSeconds = Math.max(...this.activities.map(it => Math.max(it.points.length - it.offset, 0)))
+      this.seconds = Math.floor(percentage * maxSeconds / 1000000.0)
+      this.refreshCalculations();
+    }
+
     goForward() {
         this.seconds = this.seconds + this.multiplier;
         if (this.seconds < 0) {

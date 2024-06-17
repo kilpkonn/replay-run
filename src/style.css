@@ -139,6 +139,16 @@ body,
     margin-right: 10px;
 }
 
+#drag-player {
+  display: inline-block;
+  width: 100%
+}
+
+#player-range {
+  display: inline-block;
+  width: 100%
+}
+
 #time {
     display: inline-block;
     float: right;
