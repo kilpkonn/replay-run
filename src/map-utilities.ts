@@ -51,7 +51,7 @@ export class MapUtils {
         let polyline = {
           type: "polyline",
             paths: [
-              pointArray.slice(Math.max(time - 90, 0), time)
+              pointArray.slice(Math.max(time - 180, 0), time)
             ]
         };
         const graphicDefinition = {

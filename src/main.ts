@@ -25,16 +25,16 @@ export class Main extends Base {
 
   async run() {
     const params = new Proxy(new URLSearchParams(window.location.search), {
-      get: (searchParams, prop) => searchParams.get(<string>prop),
+      get: (searchParams, prop) => searchParams.get(<string> prop),
     });
 
     let start = [-76, 42];
     let zoom = 6;
-    if ((<any>params)["default"] === "true") {
+    if ((<any> params)["default"] === "true") {
       this.player.activities = [Activities.Activity1, Activities.Activity2];
       start = this.player.activities[0].points[0];
       zoom = 16;
-    } else if ((<any>params)["load"] === "drchhbgmile2022") {
+    } else if ((<any> params)["load"] === "drchhbgmile2022") {
       this.loadGpxFromUrl("Harrisburg_Mile_2022_Ty.gpx");
       this.loadGpxFromUrl("Harrisburg_Mile_2022_Cem.gpx");
       this.loadGpxFromUrl("Harrisburg_Mile_2022_Jim.gpx");
@@ -137,17 +137,20 @@ export class Main extends Base {
     });
 
     this.getById("gpxFile")?.addEventListener("change", (e) => {
-      const files = (<HTMLInputElement>e.currentTarget!).files!;
-      Object.keys(files).forEach(i => {
+      const files = (<HTMLInputElement> e.currentTarget!).files!;
+      Object.keys(files).forEach((i) => {
         const file = files[i];
         const reader = new FileReader();
         reader.onload = (e) => {
           //server call for uploading or reading the files one-by-one
           //by using 'reader.result' or 'file'
-          this.createActivityFromTextResult(<any>reader.result, file.name.replace('.gpx', ''));
-        }
+          this.createActivityFromTextResult(
+            <any> reader.result,
+            file.name.replace(/\.gpx/ig, ""),
+          );
+        };
         reader.readAsBinaryString(file);
-      }) 
+      });
       this.closeModal();
     });
 
@@ -156,7 +159,9 @@ export class Main extends Base {
       if (element.tagName === "INPUT") {
         const htmlInputElement = element as HTMLInputElement;
         const inputActivityId = htmlInputElement.id.split("-")[1];
-        const activitiesFound = this.player.activities.filter((x) => x.id === parseInt(inputActivityId));
+        const activitiesFound = this.player.activities.filter((x) =>
+          x.id === parseInt(inputActivityId)
+        );
         if (activitiesFound.length) {
           activitiesFound[0].visible = htmlInputElement.checked;
           this.gaEvent("toggle_visibility");
@@ -177,16 +182,19 @@ export class Main extends Base {
 
     this.showOrHide("panel", true);
 
-    if (!(<any>params)["load"]) {
+    if (!(<any> params)["load"]) {
       this.showModal();
     }
   }
 
   createActivityFromTextResult(textResult: string, fileName: string) {
-    const activity = this.gpxParser.getActivitiesFromResult(textResult, fileName);
+    const activity = this.gpxParser.getActivitiesFromResult(
+      textResult,
+      fileName,
+    );
     const existingIds = this.player.activities?.map((x) => x.id || 0);
     const maxId = existingIds.length ? Math.max(...existingIds) : 0;
-    activity.id = maxId + 1;    
+    activity.id = maxId + 1;
     this.player.activities.push(activity);
     this.player.reset();
     this.refreshActivities();
@@ -214,7 +222,17 @@ export class Main extends Base {
 
   enableDisableButtons() {
     const disabled = !this.player.activities.length;
-    const buttonIds = ["clear", "reset", "back", "start", "pause", "forward", "center", "faster", "slower"];
+    const buttonIds = [
+      "clear",
+      "reset",
+      "back",
+      "start",
+      "pause",
+      "forward",
+      "center",
+      "faster",
+      "slower",
+    ];
     for (const buttonId of buttonIds) {
       this.getButtonById(buttonId).disabled = disabled;
     }
@@ -227,7 +245,7 @@ export class Main extends Base {
   }
 
   startAppendToActivity(id: number) {
-    this.getById('gpxFile').click();
+    this.getById("gpxFile").click();
     this.appendActivityId = id;
   }
 
@@ -241,8 +259,12 @@ export class Main extends Base {
     for (let i = 0; i < this.player.activities.length; i++) {
       let activity = this.player.activities[i];
       html += `<tr id="tr-${activity.id}">
-                    <td><input type="checkbox" id="toggle-${activity.id}" ${activity.visible ? 'checked' : ''}/></td>
-                    <td class="icon"><span style="background-color: rgb(${this.colors![i].join(',')})"></td>
+                    <td><input type="checkbox" id="toggle-${activity.id}" ${
+        activity.visible ? "checked" : ""
+      }/></td>
+                    <td class="icon"><span style="background-color: rgb(${
+        this.colors![i].join(",")
+      })"></td>
                     <td>${activity.title}</td>
                     <td></td>
                     <td></td>
@@ -268,15 +290,18 @@ export class Main extends Base {
                 </thhead>
                 <tbody>${html}</tboday>
               </table>`;
-    (<any>this.getById("activities")).innerHTML = html;
+    (<any> this.getById("activities")).innerHTML = html;
     this.enableDisableButtons();
-  };
+  }
 
   addActivitiesSettingsHandlers() {
     for (let activity of this.player.activities) {
-      this.getById(`settings-button-${activity.id}`).addEventListener('click', () => {
-        this.toggleSettings(activity.id!);
-      });
+      this.getById(`settings-button-${activity.id}`).addEventListener(
+        "click",
+        () => {
+          this.toggleSettings(activity.id!);
+        },
+      );
       this.addClickHandler(`append-activity-${activity.id}`, () => {
         this.startAppendToActivity(activity.id!);
         this.showOrHide(`settings-list-${activity.id}`, false);
@@ -299,7 +324,10 @@ export class Main extends Base {
           tr.children[3].innerHTML = activity.accumulatedDistance?.toFixed(2);
           tr.children[4].innerHTML = activity.averagePace || "";
 
-          if (activity.points.length - 1 <= this.player.seconds || !this.player.started) {
+          if (
+            activity.points.length - 1 <= this.player.seconds ||
+            !this.player.started
+          ) {
             tr.children[5].innerHTML = activity.timeDisplay || "";
           } else {
             tr.children[5].innerHTML = "";
@@ -319,23 +347,30 @@ export class Main extends Base {
   }
 
   setTimeText() {
-    this.getById("time").innerHTML = this.player.getMinutesSeconds(this.player.seconds);
+    this.getById("time").innerHTML = this.player.getMinutesSeconds(
+      this.player.seconds,
+    );
     if (this.player.currentDateTime) {
-      this.showOrHide("current-time-label", true, 'inline');
-      this.getById("current-time-text").innerHTML = this.player.currentDateTime.toLocaleTimeString();
+      this.showOrHide("current-time-label", true, "inline");
+      this.getById("current-time-text").innerHTML = this.player.currentDateTime
+        .toLocaleTimeString();
     } else {
-      this.showOrHide("current-time-label", false, 'inline');
+      this.showOrHide("current-time-label", false, "inline");
       this.getById("current-time-text").innerHTML = "";
     }
   }
 
   setLatLongText() {
     if (this.player.activities.length) {
-      this.showOrHide("lat-long-label", true, 'inline');
+      this.showOrHide("lat-long-label", true, "inline");
       const firstActivity = this.player.activities[0];
-      const point = firstActivity.points[Math.min(this.player.seconds, firstActivity.points.length - 1)];
-      this.getById("lat-long-text").innerHTML =
-        point[0].toFixed(5).toString() + ", " + point[1].toFixed(5).toString();
+      const point =
+        firstActivity
+          .points[
+            Math.min(this.player.seconds, firstActivity.points.length - 1)
+          ];
+      this.getById("lat-long-text").innerHTML = point[0].toFixed(5).toString() +
+        ", " + point[1].toFixed(5).toString();
     } else {
       this.showOrHide("lat-long-label", false);
       this.getById("lat-long-text").innerHTML = "";
@@ -346,10 +381,20 @@ export class Main extends Base {
     this.pointLayer!.removeAll();
     for (let i = 0; i < this.player.activities.length; i++) {
       let activity = this.player.activities[i];
-      if (activity.visible && activity.points?.length > this.player.seconds && this.player.seconds - activity.offset >= 0) {
-        const pgraphic = MapUtils.getPointGraphic(activity.points[this.player.seconds - activity.offset], this.colors![i]);
+      if (
+        activity.visible && activity.points?.length > this.player.seconds &&
+        this.player.seconds - activity.offset >= 0
+      ) {
+        const pgraphic = MapUtils.getPointGraphic(
+          activity.points[this.player.seconds - activity.offset],
+          this.colors![i],
+        );
         this.pointLayer!.add(pgraphic);
-        const lgraphic = MapUtils.getLineGraphic(activity.points, this.player.seconds - activity.offset, this.colors![i]);
+        const lgraphic = MapUtils.getLineGraphic(
+          activity.points,
+          this.player.seconds - activity.offset,
+          this.colors![i],
+        );
         this.pointLayer!.add(lgraphic);
       }
     }
@@ -360,13 +405,14 @@ export class Main extends Base {
       const panel = this.getById("panel");
       const mapContainer = this.getById("map-container");
       if (panel && mapContainer) {
-        mapContainer.style.height = (window.innerHeight - panel.offsetHeight).toString() + "px";
+        mapContainer.style.height =
+          (window.innerHeight - panel.offsetHeight).toString() + "px";
       }
     }
   }
 
   gaEvent(action: string) {
-    (<any>window).gtag("event", action);
+    (<any> window).gtag("event", action);
   }
 
   refresh() {
@@ -385,12 +431,12 @@ export class Main extends Base {
   center(zoom?: number) {
     const centerFromPlayer = this.player.getCenter();
     if (zoom) {
-      (<any>this.view).goTo({
+      (<any> this.view).goTo({
         center: centerFromPlayer,
         zoom: zoom,
       });
     } else {
-      (<any>this.view).center = centerFromPlayer;
+      (<any> this.view).center = centerFromPlayer;
     }
   }
 
@@ -412,10 +458,9 @@ export class Main extends Base {
     this.getById("modal-backdrop")?.classList.remove("show");
   }
   toggleSettings(activityId: number) {
-      const id = `settings-list-${activityId}`;
-      const settings = this.getById(id);
-      const visible = settings?.style?.display === 'block';
-      this.showOrHide(id, !visible);
-    }
-
+    const id = `settings-list-${activityId}`;
+    const settings = this.getById(id);
+    const visible = settings?.style?.display === "block";
+    this.showOrHide(id, !visible);
+  }
 }
