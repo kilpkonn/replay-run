@@ -56,7 +56,7 @@ export class Player {
         for (const activity of this.activities) {
             activity.accumulatedDistance = 0;
             activity.lastTimeUsedForDistance = 0;
-            activity.averagePace = '';
+            activity.averageSpeed = '';
             activity.offset = Math.round((activity.startDateTime.getTime() - this.startDateTime!.getTime()) / 1000)
         }
         const lengths = this.activities.filter(x => x.visible).map(x => x.points.length);
@@ -181,7 +181,7 @@ export class Player {
             let activity = this.activities[i];
             let secondsForCalculations = activity.points.length - 1;
             if (this.started) {
-                secondsForCalculations = this.seconds;
+                secondsForCalculations = this.seconds - activity.offset;
             }
             if (!activity.lastTimeUsedForDistance || !activity.accumulatedDistance) {
                 activity.lastTimeUsedForDistance = 1;
@@ -195,23 +195,15 @@ export class Player {
                         if (!activity.accumulatedDistance) {
                             activity.accumulatedDistance = 0;
                         }
-                        activity.accumulatedDistance += this.getMiles(this.calcCrow(lastPoint[1], lastPoint[0], currentPoint[1], currentPoint[0]));
+                        const distance = this.calcCrow(lastPoint[1], lastPoint[0], currentPoint[1], currentPoint[0]);
+                        activity.accumulatedDistance += distance;
+                        activity.speed = distance / 1852 * 3600;
                     }
                 }
                 activity.lastTimeUsedForDistance = secondsForCalculations;
             }
-            if (secondsForCalculations > 0) {
-                if (activity.points.length >= secondsForCalculations) {
-                    activity.averagePace = this.getAveragePace(secondsForCalculations, activity.accumulatedDistance);
-                } else {
-                    activity.averagePace = this.getAveragePace(activity.points.length - 1, activity.accumulatedDistance);
-                }
-            }
-            if (activity.points.length <= secondsForCalculations) {
-                activity.timeDisplay = this.getMinutesSeconds(activity.points.length - 1);
-            } else if (!this.started) {
-                activity.timeDisplay = this.getMinutesSeconds(activity.points.length - 1);
-            }
+            activity.averageSpeed = this.getAverageSpeed(secondsForCalculations, activity.accumulatedDistance);
+            activity.timeDisplay = this.getMinutesSeconds(Math.max(secondsForCalculations, 0));
         }
     }
 
@@ -238,11 +230,7 @@ export class Player {
             Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         var d = R * c;
-        return d;
-    }
-
-    getMiles(km: number) {
-        return km * 0.621371192;
+        return d * 1000;
     }
 
     getMinutesSeconds(totalSeconds: number) {
@@ -257,11 +245,9 @@ export class Player {
         return `${hoursText}${this.getPaddedValue(minutes)}:${this.getPaddedValue(seconds)}`;
     }
 
-    getAveragePace(totalSeconds: number, distance: number) {
-        const averagePace = totalSeconds / distance / 60;
-        const minutes = Math.trunc(averagePace);
-        const seconds = Math.trunc((averagePace - minutes) * 60);
-        return `${this.getPaddedValue(minutes)}:${this.getPaddedValue(seconds)}`;
+    getAverageSpeed(totalSeconds: number, distance: number) {
+        const averageSpeed = (distance / totalSeconds / 1852 * 3600).toFixed(2);
+        return `${averageSpeed} kn`;
     }
 
     getPaddedValue(value: number) {

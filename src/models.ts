@@ -4,8 +4,8 @@ export interface Activity {
     points: number[][];
     lastTimeUsedForDistance?: number;
     accumulatedDistance?: number;
-    pace?: number;
-    averagePace?: string;
+    speed?: number;
+    averageSpeed?: string;
     timeDisplay?: string;
     startDateTime?: Date;
     visible?: boolean;

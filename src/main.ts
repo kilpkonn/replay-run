@@ -284,7 +284,7 @@ export class Main extends Base {
                   <th></th>
                   <th>Name</th>
                   <th>Miles</th>
-                  <th>Pace</th>
+                  <th>Speed</th>
                   <th>Time</th>
                   <th>Edit</th>
                 </thhead>
@@ -321,17 +321,10 @@ export class Main extends Base {
           if (activity.accumulatedDistance === undefined) {
             activity.accumulatedDistance = 0;
           }
-          tr.children[3].innerHTML = activity.accumulatedDistance?.toFixed(2);
-          tr.children[4].innerHTML = activity.averagePace || "";
+          tr.children[3].innerHTML = (activity.accumulatedDistance / 1852).toFixed(2);
+          tr.children[4].innerHTML = activity.speed.toFixed(2) || "";
 
-          if (
-            activity.points.length - 1 <= this.player.seconds ||
-            !this.player.started
-          ) {
-            tr.children[5].innerHTML = activity.timeDisplay || "";
-          } else {
-            tr.children[5].innerHTML = "";
-          }
+          tr.children[5].innerHTML = activity.timeDisplay || "";
         }
       }
     }
