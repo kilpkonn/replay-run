@@ -53,7 +53,6 @@ export class GPXParser {
 
     getTimeVal(element: Element): Date | null {
         const timeValue = this.getChildElementValue(element, "time")?.replace(/\.\d\d\dZ/, '.000Z');
-        console.log(timeValue)
         if (timeValue) {
             return new Date(timeValue);
         }

@@ -148,6 +148,11 @@ export class Player {
       this.refreshCalculations();
     }
 
+    getPercentage() {
+      const maxSeconds = Math.max(...this.activities.map(it => Math.max(it.points.length - it.offset, 0)))
+      return this.seconds / maxSeconds;
+    }
+
     goForward() {
         this.seconds = this.seconds + this.multiplier;
         if (this.seconds < 0) {

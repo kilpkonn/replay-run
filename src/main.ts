@@ -353,6 +353,10 @@ export class Main extends Base {
     }
   }
 
+  setPlayerDrag() {
+    this.getInputById("player-range").value = `${Math.floor(this.player.getPercentage() * 1000000)}`
+  }
+
   setLatLongText() {
     if (this.player.activities.length) {
       this.showOrHide("lat-long-label", true, "inline");
@@ -415,6 +419,7 @@ export class Main extends Base {
     this.setTimeText();
     this.setLatLongText();
     this.setSpeedText();
+    this.setPlayerDrag();
     if (this.isAutoCenterButtonActive()) {
       this.center();
     }
