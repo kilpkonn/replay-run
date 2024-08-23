@@ -34,7 +34,6 @@ export class Base {
 
   addInputHandler(id: string, func: (e: any) => any) {
     this.getById(id)?.addEventListener('input', async (e: any) => {
-      this.refresh();
       await func(e);
       this.refresh();
     });

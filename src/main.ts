@@ -354,7 +354,7 @@ export class Main extends Base {
   }
 
   setPlayerDrag() {
-    this.getInputById("player-range").value = `${Math.floor(this.player.getPercentage() * 1000000)}`
+    this.getInputById("player-range").value = `${Math.round(this.player.getPercentage() * 1000000)}`
   }
 
   setLatLongText() {
